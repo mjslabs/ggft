@@ -1,4 +1,6 @@
 # Go Generate from Template (ggft)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmjslabs%2Fggft.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmjslabs%2Fggft?ref=badge_shield)
+
 
 ggft is a tool for managing templates and generating new projects based on them.
 Commands are available to download, list, and delete templates. This leads to
@@ -38,3 +40,7 @@ template storage. This is not yet configurable.
 
 This is a brand new project, and as such is missing many features and not yet
 heavily tested. Contributions welcome!
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmjslabs%2Fggft.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmjslabs%2Fggft?ref=badge_large)
