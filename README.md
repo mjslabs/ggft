@@ -27,8 +27,9 @@ ggft new ms my-other-new-project
 This would download the `ggft-microservice` repo to a local cache directory
 (defaults to `~/.ggft/templates`), and then creates two new directories using
 the `ggft-microservice` directory as a starting point. Assuming the
-`ggft-microservice` repo uses Go template syntax in its files, the user will be
-prompted for values for those template variables.
+`ggft-microservice` repo uses
+[Go template syntax](https://golang.org/pkg/text/template/) in its files, the
+user will be prompted for values for those template variables.
 
 ## Caveats
 
