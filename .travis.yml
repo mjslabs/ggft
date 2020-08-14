@@ -1,0 +1,19 @@
+language: go
+
+env:
+  - GO111MODULE=on
+
+go:
+  - 1.14.x
+
+install:
+  - GO111MODULE=off go get -v github.com/codeclimate/test-reporter
+
+before_script:
+  - test-reporter before-build
+
+script:
+  - make test
+
+after_script:
+  - test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
