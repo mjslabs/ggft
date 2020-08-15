@@ -20,8 +20,9 @@ func TestPkgConfig(t *testing.T) {
 	t.Run("InitializeConfig", testInitializeConfig)
 	t.Run("ReadConfig", testReadConfig)
 	t.Run("ReadConfigNoExist", testReadConfigNoExist)
-	t.Run("ValidateConfig", testValidateConfigInvalid)
 	t.Run("ValidateConfig", testValidateConfigValid)
+	t.Run("ValidateConfigInvalid", testValidateConfigInvalid)
+	t.Run("ValidateConfigNoPerms", testValidateConfigValidNoPerms)
 }
 
 func testInitializeConfig(t *testing.T) {
@@ -55,6 +56,16 @@ func testValidateConfigValid(t *testing.T) {
 	viper.SetConfigFile(testConfig)
 	assert.NoError(t, viper.ReadInConfig())
 	assert.NoError(t, validateConfig(viper.GetViper()))
+	assert.NoError(t, os.Remove(testConfig))
+	assert.NoError(t, os.RemoveAll(testDir))
+}
+
+func testValidateConfigValidNoPerms(t *testing.T) {
+	assert.NoError(t, testhelpers.CreateFileWithContents(testConfig, configContents))
+	assert.NoError(t, os.Mkdir(testDir, 0000))
+	viper.SetConfigFile(testConfig)
+	assert.NoError(t, viper.ReadInConfig())
+	assert.Error(t, validateConfig(viper.GetViper()))
 	assert.NoError(t, os.Remove(testConfig))
 	assert.NoError(t, os.RemoveAll(testDir))
 }
