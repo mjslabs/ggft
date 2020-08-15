@@ -20,14 +20,23 @@ less typing of boilerplate or IDE magic when starting a new project, and helping
 to enable consistency on teams, or if you need to manage and use git repos on
 many computers.
 
-## Installation & usage
+## Installation
 
-To install ggft, use the standard `go install` process.
+To install ggft, the quickest way is to use the standard `go get` process:
 
 ```bash
-git clone https://github.com/mjslabs/ggft && cd ggft
-go install
+git get https://github.com/mjslabs/ggft 
 ```
+
+Alternatively, if you'd like to use custom build directives, add features, or
+install a versioned binary, use the clone and make method:
+
+```bash
+git clone https://github.com/mjslabs/ggft.git && cd ggft
+make install
+```
+
+## Usage
 
 A common pattern to use with ggft is to download a template once, and then
 deploy it many times. For example:
