@@ -2,6 +2,7 @@ package tmpl
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -37,6 +38,9 @@ func CreateFileFromTemplate(input, output string) error {
 func ScanTemplateForVars(templateFile string) ([]string, error) {
 	buf := &bytes.Buffer{}
 	t, err := getTemplateObject(templateFile)
+	if err != nil {
+		return nil, errors.New(err.Error() + " in file " + templateFile)
+	}
 	r := regexp.MustCompile(`map has no entry for key "([^ ]+?)"`)
 	varList := []string{}
 
