@@ -13,6 +13,7 @@ go:
 
 install:
   - GO111MODULE=off go get -v github.com/codeclimate/test-reporter
+  - go get -u golang.org/x/lint/golint
 
 before_script:
   - test-reporter before-build
