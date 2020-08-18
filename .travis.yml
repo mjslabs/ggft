@@ -28,4 +28,8 @@ script:
   - make
 
 after_script:
-  - test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
+  - |-
+      case $TRAVIS_OS_NAME in
+        linux)
+          test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
+      esac
