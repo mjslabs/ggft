@@ -63,6 +63,7 @@ func testValidateConfigValid(t *testing.T) {
 func testValidateConfigValidNoPerms(t *testing.T) {
 	assert.NoError(t, testhelpers.CreateFileWithContents(testConfig, configContents))
 	assert.NoError(t, os.Mkdir(testDir, 0400))
+	assert.NoError(t, os.Chmod(testDir, 0400)) // for Windows
 	viper.SetConfigFile(testConfig)
 	assert.NoError(t, viper.ReadInConfig())
 	assert.Error(t, validateConfig(viper.GetViper()))
