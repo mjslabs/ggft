@@ -1,5 +1,10 @@
 language: go
 
+os:
+  - linux
+  - osx
+  - windows
+
 env:
   - GO111MODULE=on
 
@@ -14,6 +19,7 @@ before_script:
 
 script:
   - make test
+  - GOOS=$TRAVIS_OS_NAME make dist
 
 after_script:
   - test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
