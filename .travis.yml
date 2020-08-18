@@ -21,9 +21,8 @@ before_script:
         windows)
           choco install make
       esac
-  - |-
-      export GOOS=${TRAVIS_OS_NAME}
-      [[ "$TRAVIS_OS_NAME" == "osx" ]] && export GOOS="darwin"
+  - export GOOS=${TRAVIS_OS_NAME}
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export GOOS="darwin" fi
 
 script:
   - make test
