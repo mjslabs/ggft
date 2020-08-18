@@ -16,10 +16,18 @@ install:
 
 before_script:
   - test-reporter before-build
+  - |-
+      case $TRAVIS_OS_NAME in
+        windows)
+          choco install make
+      esac
+  - |-
+      export GOOS=${TRAVIS_OS_NAME}
+      [[ "$TRAVIS_OS_NAME" == "osx" ]] && export GOOS="darwin"
 
 script:
   - make test
-  - GOOS=$TRAVIS_OS_NAME make dist
+  - make
 
 after_script:
   - test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
