@@ -25,7 +25,7 @@ many computers.
 To install ggft, the quickest way is to use the standard `go get` process:
 
 ```bash
-go get https://github.com/mjslabs/ggft 
+go get github.com/mjslabs/ggft
 ```
 
 Alternatively, if you'd like to use custom build directives, add features, or
