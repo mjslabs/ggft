@@ -8,7 +8,6 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
-	"golang.org/x/sys/unix"
 )
 
 type configFileDefault struct {
@@ -42,11 +41,12 @@ func readConfig(config string) error {
 
 func validateConfig(v *viper.Viper) error {
 	cache := v.GetString("cache")
-	if _, err := os.Stat(cache); os.IsNotExist(err) {
+	cinfo, err := os.Stat(cache)
+	if os.IsNotExist(err) {
 		return err
 	}
 
-	if unix.Access(cache, unix.W_OK) != nil {
+	if cinfo.Mode().Perm()&(1<<(uint(7))) == 0 {
 		return errors.New("directory " + cache + " not writable!")
 	}
 
