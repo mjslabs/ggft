@@ -95,7 +95,9 @@ func processPath(curPath, templateDir, output string) error {
 		return nil
 	case mode.IsRegular():
 		// Template file, process accordingly
-		getVarsFromUser(curPath)
+		if err := getVarsFromUser(curPath); err != nil {
+			return err
+		}
 		return tmpl.CreateFileFromTemplate(curPath, destination)
 	}
 

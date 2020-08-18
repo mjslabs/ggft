@@ -12,6 +12,7 @@ import (
 func TestPkgTmpl(t *testing.T) {
 	t.Run("CreateFileFromTemplate", testCreateFile)
 	t.Run("ScanTemplateForVars", testScanTemplateForVars)
+	t.Run("ScanTemplateForVarsInvalid", testScanTemplateForVarsInvalid)
 }
 
 func testCreateFile(t *testing.T) {
@@ -36,5 +37,14 @@ func testScanTemplateForVars(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, varList, 1)
 	assert.Equal(t, varList[0], varName)
+	assert.NoError(t, os.Remove(tmplFile))
+}
+
+func testScanTemplateForVarsInvalid(t *testing.T) {
+	tmplFile := ".testing.tmpl"
+	assert.NoError(t, testhelpers.CreateFileWithContents(tmplFile, "{{ doesntexist.ForSure }} - {{ .TemplateFileName }}"))
+	_, err := ScanTemplateForVars(tmplFile)
+
+	assert.Error(t, err)
 	assert.NoError(t, os.Remove(tmplFile))
 }
