@@ -6,11 +6,17 @@ import (
 	"path/filepath"
 )
 
+// TmplSuffix is the file suffix for template files
+var TmplSuffix = ".tmpl"
+
+// RegSuffix is the file suffix for non-template files
+var RegSuffix = ".txt"
+
 // CreateTestTemplateProject -
 func CreateTestTemplateProject(projectDir, subDir, outputDir string) (string, string, string, string, error) {
 	subDirPath := filepath.Join(projectDir, subDir)
-	tmplFile := "template.txt"
-	regFile := "file.txt"
+	tmplFile := "template" + TmplSuffix
+	regFile := "file" + RegSuffix
 
 	if err := os.MkdirAll(subDirPath, 0755); err != nil {
 		return "", "", "", "", err
