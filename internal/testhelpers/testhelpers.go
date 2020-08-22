@@ -15,9 +15,6 @@ func CreateTestTemplateProject(projectDir, subDir, outputDir string) (string, st
 	if err := os.MkdirAll(subDirPath, 0755); err != nil {
 		return "", "", "", "", err
 	}
-	if err := os.Mkdir(outputDir, 0755); err != nil {
-		return "", "", "", "", err
-	}
 	if err := CreateFileWithContents(filepath.Join(subDirPath, tmplFile), "{{/* a comment */}}"); err != nil {
 		return "", "", "", "", err
 	}
