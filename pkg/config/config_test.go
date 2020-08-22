@@ -30,6 +30,7 @@ func testInitializeConfig(t *testing.T) {
 	_, err := os.Stat(filepath.Join(testDir, testConfig))
 	assert.NoError(t, err)
 	assert.NoError(t, os.RemoveAll(testDir))
+	assert.Error(t, initializeConfig(string(filepath.Separator), string(filepath.Separator), string(filepath.Separator)))
 }
 
 func testReadConfig(t *testing.T) {
