@@ -6,7 +6,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -37,14 +36,20 @@ var newCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(newCmd)
+	newCmd.Flags().StringSliceP("skip", "s", []string{}, "Suffixes of files to copy instead of parse")
+	newCmd.Flags().StringSliceP("skiptrim", "S", []string{}, "Suffixes of files to copy instead of parse, trimming suffix")
 }
 
 // Create a new directory from a template
 func cmdNew(cmd *cobra.Command, args []string) {
-	utils.CheckError(newProject(filepath.Join(viper.GetString("cache"), args[0]), args[1]))
+	skipSuffixes, err := cmd.Flags().GetStringSlice("skip")
+	utils.CheckError(err)
+	skipTrimSuffixes, err := cmd.Flags().GetStringSlice("skiptrim")
+	utils.CheckError(err)
+	utils.CheckError(newProject(filepath.Join(viper.GetString("cache"), args[0]), args[1], skipSuffixes, skipTrimSuffixes))
 }
 
-func newProject(templatePath, outputDir string) error {
+func newProject(templatePath, outputDir string, skipSuffixes, skipTrimSuffixes []string) error {
 	templateDir, err := homedir.Expand(templatePath)
 	if err != nil {
 		return err
@@ -52,8 +57,7 @@ func newProject(templatePath, outputDir string) error {
 
 	// Check for template dir existance
 	if _, err := os.Stat(templateDir); os.IsNotExist(err) {
-		fmt.Println("directory not found:", templateDir)
-		os.Exit(1)
+		return errors.New("directory not found: " + templateDir)
 	}
 
 	// Create output dir
@@ -65,19 +69,19 @@ func newProject(templatePath, outputDir string) error {
 	tmpl.SetVar("GitHash", utils.GetGitHash(templateDir))
 
 	// Convert template to output
-	return walkTemplateDirectory(templateDir, outputDir)
+	return walkTemplateDirectory(templateDir, outputDir, skipSuffixes, skipTrimSuffixes)
 }
 
-func walkTemplateDirectory(templateDir, outputDir string) error {
+func walkTemplateDirectory(templateDir, outputDir string, skipSuffixes, skipTrimSuffixes []string) error {
 	if err := filepath.Walk(templateDir, func(path string, info os.FileInfo, err error) error {
-		return processPath(path, templateDir, outputDir)
+		return processPath(path, templateDir, outputDir, skipSuffixes, skipTrimSuffixes)
 	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func processPath(curPath, templateDir, output string) error {
+func processPath(curPath, templateDir, output string, skipSuffixes, skipTrimSuffixes []string) error {
 	destination := filepath.Join(output, strings.Replace(curPath, templateDir, "", 1))
 	fi, err := os.Stat(curPath)
 	if err != nil {
@@ -90,9 +94,11 @@ func processPath(curPath, templateDir, output string) error {
 	case mode.IsDir():
 		os.Mkdir(destination, 0755)
 		return nil
-	case strings.HasSuffix(curPath, ".tmpl"):
-		copyFile(curPath, destination)
-		return nil
+	case shouldCopy(curPath, append(skipSuffixes, skipTrimSuffixes...)):
+		if b, s := shouldCopyAndTrim(curPath, skipTrimSuffixes); b {
+			return copyFile(curPath, strings.TrimRight(destination, s))
+		}
+		return copyFile(curPath, destination)
 	case mode.IsRegular():
 		// Template file, process accordingly
 		if err := getVarsFromUser(curPath); err != nil {
@@ -102,6 +108,24 @@ func processPath(curPath, templateDir, output string) error {
 	}
 
 	return nil
+}
+
+func shouldCopyAndTrim(path string, skipSuffixes []string) (bool, string) {
+	for _, s := range skipSuffixes {
+		if strings.HasSuffix(path, s) {
+			return true, s
+		}
+	}
+	return false, ""
+}
+
+func shouldCopy(path string, skipSuffixes []string) bool {
+	for _, s := range skipSuffixes {
+		if strings.HasSuffix(path, s) {
+			return true
+		}
+	}
+	return false
 }
 
 func getVarsFromUser(tmplPath string) error {

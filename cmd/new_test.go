@@ -14,7 +14,10 @@ import (
 
 func TestCmdNew(t *testing.T) {
 	t.Run("NewProject", testNewProject)
+	t.Run("NewProject", testNewProjectNotFound)
 	t.Run("CopyFile", testCopyFile)
+	t.Run("ShouldCopyFile", testShouldCopyFile)
+	t.Run("ShouldCopyAndTrimFile", testShouldCopyAndTrimFile)
 }
 
 func testNewProject(t *testing.T) {
@@ -24,7 +27,7 @@ func testNewProject(t *testing.T) {
 
 	inTmplFile, inRegFile, outTmplFile, outRegFile, err := testhelpers.CreateTestTemplateProject(projectDir, subDir, outputDir)
 	assert.NoError(t, err)
-	assert.NoError(t, newProject(projectDir, outputDir))
+	assert.NoError(t, newProject(projectDir, outputDir, []string{}, []string{}))
 
 	hashOne, err := md5OfFile(inTmplFile)
 	assert.NoError(t, err)
@@ -38,8 +41,12 @@ func testNewProject(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, hashOne, hashTwo)
 
-	os.RemoveAll(projectDir)
-	os.RemoveAll(outputDir)
+	assert.NoError(t, os.RemoveAll(projectDir))
+	assert.NoError(t, os.RemoveAll(outputDir))
+}
+
+func testNewProjectNotFound(t *testing.T) {
+	assert.Error(t, newProject("", "", []string{}, []string{}))
 }
 
 func testCopyFile(t *testing.T) {
@@ -55,8 +62,27 @@ func testCopyFile(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, hashOne, hashTwo)
 
-	os.Remove(testFileA)
-	os.Remove(testFileB)
+	assert.NoError(t, os.Remove(testFileA))
+	assert.NoError(t, os.Remove(testFileB))
+
+	assert.Error(t, copyFile("nope", "alsonope"))
+}
+
+func testShouldCopyFile(t *testing.T) {
+	suffix := ".txt"
+	assert.True(t, shouldCopy("file"+suffix, []string{suffix}))
+	assert.False(t, shouldCopy("file"+suffix, []string{".noteverathing"}))
+}
+
+func testShouldCopyAndTrimFile(t *testing.T) {
+	suffix := ".txt"
+	b, s := shouldCopyAndTrim("file"+suffix, []string{suffix})
+	assert.Equal(t, b, true)
+	assert.Equal(t, s, suffix)
+
+	b, s = shouldCopyAndTrim("file"+suffix, []string{".noteverathing"})
+	assert.Equal(t, b, false)
+	assert.Equal(t, s, "")
 }
 
 func md5OfFile(filePath string) (string, error) {
