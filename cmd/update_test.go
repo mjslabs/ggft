@@ -23,4 +23,6 @@ func testUpdateProjects(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, updateProjects(testDir))
 	assert.NoError(t, os.RemoveAll(testDir))
+
+	assert.Error(t, updateRepo("nope"))
 }
