@@ -36,8 +36,10 @@ var newCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(newCmd)
+	newCmd.Flags().StringSliceP("ignore", "i", []string{"README.md"}, "Files to ignore")
 	newCmd.Flags().StringSliceP("skip", "s", []string{}, "Suffixes of files to copy instead of parse")
 	newCmd.Flags().StringSliceP("skiptrim", "S", []string{}, "Suffixes of files to copy instead of parse, trimming suffix")
+	newCmd.Flags().StringSliceP("trim", "t", []string{".ggft"}, "Suffixes of files to parse, trimming suffix")
 }
 
 // Create a new directory from a template
@@ -46,10 +48,14 @@ func cmdNew(cmd *cobra.Command, args []string) {
 	utils.CheckError(err)
 	skipTrimSuffixes, err := cmd.Flags().GetStringSlice("skiptrim")
 	utils.CheckError(err)
-	utils.CheckError(newProject(filepath.Join(viper.GetString("cache"), args[0]), args[1], skipSuffixes, skipTrimSuffixes))
+	trimSuffixes, err := cmd.Flags().GetStringSlice("trim")
+	utils.CheckError(err)
+	ignoredFiles, err := cmd.Flags().GetStringSlice("ignore")
+	utils.CheckError(err)
+	utils.CheckError(newProject(filepath.Join(viper.GetString("cache"), args[0]), args[1], skipSuffixes, skipTrimSuffixes, trimSuffixes, ignoredFiles))
 }
 
-func newProject(templatePath, outputDir string, skipSuffixes, skipTrimSuffixes []string) error {
+func newProject(templatePath, outputDir string, skipSuffixes, skipTrimSuffixes, trimSuffixes, ignoredFiles []string) error {
 	templateDir, err := homedir.Expand(templatePath)
 	if err != nil {
 		return err
@@ -69,19 +75,19 @@ func newProject(templatePath, outputDir string, skipSuffixes, skipTrimSuffixes [
 	tmpl.SetVar("GitHash", utils.GetGitHash(templateDir))
 
 	// Convert template to output
-	return walkTemplateDirectory(templateDir, outputDir, skipSuffixes, skipTrimSuffixes)
+	return walkTemplateDirectory(templateDir, outputDir, skipSuffixes, skipTrimSuffixes, trimSuffixes, ignoredFiles)
 }
 
-func walkTemplateDirectory(templateDir, outputDir string, skipSuffixes, skipTrimSuffixes []string) error {
+func walkTemplateDirectory(templateDir, outputDir string, skipSuffixes, skipTrimSuffixes, trimSuffixes, ignoredFiles []string) error {
 	if err := filepath.Walk(templateDir, func(path string, info os.FileInfo, err error) error {
-		return processPath(path, templateDir, outputDir, skipSuffixes, skipTrimSuffixes)
+		return processPath(path, templateDir, outputDir, skipSuffixes, skipTrimSuffixes, trimSuffixes, ignoredFiles)
 	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func processPath(curPath, templateDir, output string, skipSuffixes, skipTrimSuffixes []string) error {
+func processPath(curPath, templateDir, output string, skipSuffixes, skipTrimSuffixes, trimSuffixes, ignoredFiles []string) error {
 	destination := filepath.Join(output, strings.Replace(curPath, templateDir, "", 1))
 	fi, err := os.Stat(curPath)
 	if err != nil {
@@ -91,18 +97,30 @@ func processPath(curPath, templateDir, output string, skipSuffixes, skipTrimSuff
 	switch mode := fi.Mode(); {
 	case strings.Contains(curPath, string(filepath.Separator)+".git"+string(filepath.Separator)):
 		return nil
+
+	case shouldIgnore(curPath, ignoredFiles):
+		// Should be ignored because of -i
+		return nil
+
 	case mode.IsDir():
 		os.Mkdir(destination, 0755)
 		return nil
+
 	case shouldCopy(curPath, append(skipSuffixes, skipTrimSuffixes...)):
-		if b, s := shouldCopyAndTrim(curPath, skipTrimSuffixes); b {
+		// Either -s or -S brought us here
+		if b, s := shouldTrim(curPath, skipTrimSuffixes); b {
 			return copyFile(curPath, strings.TrimRight(destination, s))
 		}
 		return copyFile(curPath, destination)
+
 	case mode.IsRegular():
 		// Template file, process accordingly
 		if err := getVarsFromUser(curPath); err != nil {
 			return err
+		}
+		// Check for -t
+		if b, s := shouldTrim(curPath, trimSuffixes); b {
+			destination = strings.TrimRight(destination, s)
 		}
 		return tmpl.CreateFileFromTemplate(curPath, destination)
 	}
@@ -110,8 +128,17 @@ func processPath(curPath, templateDir, output string, skipSuffixes, skipTrimSuff
 	return nil
 }
 
-func shouldCopyAndTrim(path string, skipSuffixes []string) (bool, string) {
-	for _, s := range skipSuffixes {
+func shouldIgnore(path string, ignoredFiles []string) bool {
+	for _, s := range ignoredFiles {
+		if strings.HasSuffix(path, s) {
+			return true
+		}
+	}
+	return false
+}
+
+func shouldTrim(path string, trimSuffixes []string) (bool, string) {
+	for _, s := range trimSuffixes {
 		if strings.HasSuffix(path, s) {
 			return true, s
 		}
