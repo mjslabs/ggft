@@ -1,3 +1,6 @@
+# Customizations for this repo
+/ggft
+/cover.html
 
 # Created by https://www.toptal.com/developers/gitignore/api/go,vim,linux,macos,windows,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,vim,linux,macos,windows,visualstudiocode
@@ -9,7 +12,6 @@
 *.dll
 *.so
 *.dylib
-/ggft
 
 # Test binary, built with `go test -c`
 *.test
