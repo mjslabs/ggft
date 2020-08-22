@@ -54,6 +54,30 @@ the `ggft-microservice` directory as a starting point. Assuming the
 [Go template syntax](https://golang.org/pkg/text/template/) in its files, the
 user will be prompted for values for those template variables.
 
+### Advanced
+
+`ggft new` has a few flags that allow you to customize how files are processed.
+There are options to treat files as regular (non-template) files, trimming file
+suffixes, and more. See `ggft new -h` for more info.
+
+## Creating a template repo
+
+ggft template repos are simply git repos that have files containing Go template
+syntax and special file suffixes. Here's an example with inline comments:
+
+```text
+example
+├── Makefile       <-- Makefile specific to this project
+├── README.md      <-- README for the template itself. Will be ignored on parse
+├── README.md.ggft <-- Will be turned into README.md when parsed by ggft
+└── myproject.c    <-- A file using Go template syntax to be parsed by ggft
+```
+
+You can see other than README, we simply have a repo of files that we want to
+use to seed our new project directory when we run `ggft`. For more info on how
+the README parsing works, see the help documentation on the `-t` and `-i` flags
+of `ggft new`.
+
 ## Caveats
 
 ggft will try to initialize a config structure in `~/.ggft` and use this for all
