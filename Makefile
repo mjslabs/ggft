@@ -36,6 +36,7 @@ install: ggft
 
 c.out:
 	go test -coverprofile=c.out -v $(PKG)/...
+	@echo Total coverage: `go tool cover -func c.out | grep total | awk '{print substr($$3, 1, length($$3)-1)}')`%
 
 .PHONY: clean
 clean:
