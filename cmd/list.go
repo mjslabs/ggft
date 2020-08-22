@@ -19,9 +19,10 @@ import (
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List downloaded templates available to use with 'new'",
-	Run:   cmdList,
+	Use:     "list",
+	Aliases: []string{"ls"},
+	Short:   "List downloaded templates available to use with 'new'",
+	Run:     cmdList,
 }
 
 func init() {

@@ -17,8 +17,9 @@ import (
 
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
-	Use:   "delete <template>",
-	Short: "Delete a template",
+	Use:     "delete <template>",
+	Aliases: []string{"rm"},
+	Short:   "Delete a template",
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("requires a template name")
