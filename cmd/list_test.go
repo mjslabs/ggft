@@ -22,4 +22,7 @@ func testListDirs(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(testSubDirs), len(dirs))
 	assert.NoError(t, os.RemoveAll(testDir))
+
+	_, err = listDirs("nope")
+	assert.Error(t, err)
 }

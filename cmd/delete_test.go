@@ -21,4 +21,6 @@ func testDeleteTemplate(t *testing.T) {
 	assert.NoError(t, deleteTemplate(testDir))
 	_, err := os.Stat(testDir)
 	assert.True(t, os.IsNotExist(err))
+
+	assert.Error(t, deleteTemplate("nope"))
 }
