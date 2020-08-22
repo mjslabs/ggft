@@ -10,6 +10,7 @@ import (
 
 func TestCmdList(t *testing.T) {
 	t.Run("ListDirs", testListDirs)
+	t.Run("ListDirs", testPrintDirs)
 }
 
 func testListDirs(t *testing.T) {
@@ -25,4 +26,8 @@ func testListDirs(t *testing.T) {
 
 	_, err = listDirs("nope")
 	assert.Error(t, err)
+}
+
+func testPrintDirs(t *testing.T) {
+	assert.Error(t, printDirs("nopers"))
 }
