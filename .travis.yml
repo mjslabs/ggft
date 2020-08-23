@@ -33,3 +33,13 @@ after_script:
         linux)
           test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
       esac
+
+deploy:
+  provider: releases
+  api_key:
+    secure: $GITHUB_TOKEN
+  file: "ggft*.zip"
+  cleanup: false
+  draft: true
+  on:
+    tags: true
