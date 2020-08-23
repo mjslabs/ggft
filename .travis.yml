@@ -40,5 +40,5 @@ deploy:
   file: "ggft*.zip"
   cleanup: false
   draft: true
-  on:
-    tags: true
+  # on:
+    # tags: true
