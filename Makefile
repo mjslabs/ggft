@@ -26,9 +26,12 @@ endif
 ggft:
 	go build -v -o $(OUT) -ldflags="-X 'github.com/mjslabs/ggft/cmd.version=$(VERSION)'" $(PKG)
 
+ifeq ($(DIST_NAME),)
+DIST_NAME = $(OUT)
+endif
 .PHONY: dist
 dist: ggft
-	zip $(OUT).zip $(OUT)
+	zip $(DIST_NAME).zip $(OUT)
 
 .PHONY: install
 install: ggft
