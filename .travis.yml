@@ -10,6 +10,7 @@ env:
 
 go:
   - 1.14.x
+  - 1.15.x
 
 install:
   - GO111MODULE=off go get -v github.com/codeclimate/test-reporter
@@ -40,5 +41,6 @@ deploy:
   file: "ggft*.zip"
   cleanup: false
   draft: true
-  # on:
+  on:
+    branch: travis
     # tags: true
