@@ -39,7 +39,7 @@ deploy:
   api_key: $GITHUB_TOKEN_TRAVIS
   file: "ggft*.zip"
   file_glob: true
-  cleanup: false
+  skip_cleanup: true
   draft: true
   on:
     branch: travis
