@@ -22,8 +22,10 @@ before_script:
       case $TRAVIS_OS_NAME in
         windows)
           choco install make
+          ;;
         osx)
           brew install gawk
+          ;;
       esac
 
 script:
