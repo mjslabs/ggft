@@ -21,7 +21,7 @@ before_script:
   - |-
       case $TRAVIS_OS_NAME in
         windows)
-          choco install make
+          choco install make zip
           ;;
         osx)
           # brew install gawk
