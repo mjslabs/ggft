@@ -39,7 +39,7 @@ install: ggft
 
 c.out:
 	go test -coverprofile=c.out -v $(PKG)/...
-	@echo Total coverage: `go tool cover -func c.out | grep total | awk '{print substr($$3, 1, length($$3)-1)}')`%
+	@echo Total coverage: `go tool cover -func c.out | grep total | awk '{print substr($$3, 1, length($$3)-1)}'`%
 
 cover.html: c.out
 	go tool cover -html=c.out -o cover.html
