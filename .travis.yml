@@ -12,7 +12,6 @@ go:
   - 1.15.x
 
 install:
-  # - if [ $TRAVIS_OS_NAME = osx ]; then brew update; fi
   - GO111MODULE=off go get -v github.com/codeclimate/test-reporter
   - go get -u golang.org/x/lint/golint
 
@@ -22,9 +21,6 @@ before_script:
       case $TRAVIS_OS_NAME in
         windows)
           choco install make zip
-          ;;
-        osx)
-          # brew install gawk
           ;;
       esac
 
