@@ -3,7 +3,7 @@ language: go
 os:
   - linux
   - osx
-  # - windows
+  - windows
 
 env:
   - GO111MODULE=on
@@ -20,18 +20,23 @@ before_script:
   - |-
       case $TRAVIS_OS_NAME in
         windows)
-          choco install make
+          choco install make zip
+          ;;
       esac
 
 script:
   - make test
-  - DIST_NAME="ggft_${TRAVIS_OS_NAME}" make dist
+  - export DIST_NAME="ggft_${TRAVIS_OS_NAME}"
+  - make dist
 
 after_script:
   - |-
       case $TRAVIS_OS_NAME in
-        linux)
+        windows)
+          ;;
+        *)
           test-reporter after-build --coverage-input-type gocov --exit-code $TRAVIS_TEST_RESULT
+          ;;
       esac
 
 deploy:
