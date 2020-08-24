@@ -3,7 +3,7 @@ language: go
 os:
   - linux
   - osx
-  # - windows
+  - windows
 
 env:
   - GO111MODULE=on
@@ -24,7 +24,7 @@ before_script:
           choco install make
           ;;
         osx)
-          brew install gawk
+          # brew install gawk
           ;;
       esac
 
