@@ -30,7 +30,8 @@ before_script:
 
 script:
   - make test
-  - DIST_NAME="ggft_${TRAVIS_OS_NAME}" make dist
+  - export DIST_NAME="ggft_${TRAVIS_OS_NAME}"
+  - make dist
 
 after_script:
   - |-
