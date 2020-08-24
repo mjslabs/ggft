@@ -19,7 +19,7 @@ all: build
 build: vet lint ggft
 
 
-ifeq ($(GOOS),windows)
+ifeq ($(TRAVIS_OS_NAME),windows)
 OUT := $(OUT).exe
 .PHONY: ggft
 endif
