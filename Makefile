@@ -17,7 +17,7 @@ all: build
 
 # Run all build steps
 .PHONY: build
-build: vet lint semgrep ggft
+build: vet lint ggft
 
 # Create binary
 ifeq ($(TRAVIS_OS_NAME),windows)

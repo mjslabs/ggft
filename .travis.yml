@@ -30,6 +30,12 @@ before_script:
 script:
   - make test
   - export DIST_NAME="ggft_${TRAVIS_OS_NAME}"
+  - |-
+    case $TRAVIS_OS_NAME in
+      linux)
+        make semgrep
+        ;;
+    esac
   - make dist
 
 after_script:
