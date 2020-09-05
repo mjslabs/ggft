@@ -16,7 +16,7 @@ endif
 all: build
 
 .PHONY: build
-build: vet lint ggft
+build: vet lint semgrep ggft
 
 
 ifeq ($(TRAVIS_OS_NAME),windows)
@@ -53,6 +53,10 @@ lint:
 	@for file in $(GO_FILES); do \
 		golint $$file ; \
 	done
+
+.PHONY: semgrep
+semgrep:
+	@docker run --rm -v "${PWD}:/src" returntocorp/semgrep --config=https://semgrep.dev/p/r2c-CI --exclude "*_test.go" .
 
 .PHONY: test
 test: c.out
